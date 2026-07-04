@@ -1,0 +1,66 @@
+JOBS: 24
+TEST_ONLY: true
+TTA: true
+LOG_INTERVAL: 10
+TRAIN_BATCH_SIZE: 2
+VAL_BATCH_SIZE: 1
+START_EPOCH: 0
+END_EPOCH: 80
+VAL_INTERVAL: 1
+MODEL_SANING_INTERVAL: 1
+MIX_PRECISION: false
+RESUME:
+  PATH: checkpoints/EvLCD_finetune_ep019.pth.tar
+  TYPE: null
+  SET_EPOCH: false
+RESUME_STRICT: false
+DUAL_VAL: false
+LAUNCHER: ParallelLaunch
+SEED: 9527
+IS_CUDA: true
+OPTIMIZER:
+  NAME: Adam
+  LR: 0.0001
+  LR_SCHEDULER: cosine
+  end_epoch: 80
+LOSS:
+  - NAME: l1_charbonnier_loss
+    WEIGHT: 1
+  - NAME: gradient_loss
+    WEIGHT: 1
+METRICS:
+  - NAME: PSNR
+  - NAME: PSNR-Linear_N
+  - NAME: SSIM
+DATASET:
+  NAME: see_everything_everytime_dataset
+  root: /path/to/DVS346-eval-mean-prompt2
+  in_frames: 1
+  crop_h: 260
+  crop_w: 346
+  sample_step: 1
+  all_groups_as_testing: true
+  eval_phase: true
+  event_representation_config:
+    type: voxel_grid
+    channel: 64
+    scale: 5
+    to_bin: false
+  testing_mapping_type:
+    - "high-normal"
+    - "normal-normal"
+    - "low-normal"
+  training_mapping_type:
+    - "high-normal"
+    - "low-normal"
+    - "normal-normal"
+MODEL:
+  NAME: EvLCD
+  event_ch: 64
+  base_ch: 48
+  lcd_ch: 32
+VISUALIZATION:
+  folder: ./vis
+  tag: EvLCD_SEE_eval_tta
+  intermediate_visualization: false
+  ONLY_VIS: false

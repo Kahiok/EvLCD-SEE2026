@@ -1,0 +1,67 @@
+JOBS: 24
+TEST_ONLY: false
+LOG_INTERVAL: 10
+TRAIN_BATCH_SIZE: 2
+VAL_BATCH_SIZE: 2
+START_EPOCH: 0
+END_EPOCH: 20
+VAL_INTERVAL: 1
+MODEL_SANING_INTERVAL: 1
+MIX_PRECISION: false
+RESUME:
+  PATH: checkpoints/EvLCD_base_ep071.pth.tar
+  TYPE: model
+  SET_EPOCH: false
+RESUME_STRICT: true
+DUAL_VAL: false
+LAUNCHER: ParallelLaunch
+SEED: 9527
+IS_CUDA: true
+OPTIMIZER:
+  NAME: Adam
+  LR: 0.00003
+  LR_SCHEDULER: cosine
+  end_epoch: 20
+LOSS:
+  - NAME: l1_charbonnier_loss
+    WEIGHT: 1
+  - NAME: gradient_loss
+    WEIGHT: 1
+TASK_LOSS_WEIGHTS:
+  low-normal: 2.0
+  high-normal: 2.0
+  normal-normal: 0.5
+METRICS:
+  - NAME: PSNR
+  - NAME: PSNR-Linear_N
+  - NAME: SSIM
+DATASET:
+  NAME: see_everything_everytime_dataset
+  root: /path/to/SEE-600K/RoboticArm/
+  in_frames: 1
+  crop_h: 128
+  crop_w: 256
+  sample_step: 50
+  event_representation_config:
+    type: voxel_grid
+    channel: 64
+    scale: 5
+    to_bin: false
+  testing_mapping_type:
+    - "high-normal"
+    - "normal-normal"
+    - "low-normal"
+  training_mapping_type:
+    - "high-normal"
+    - "low-normal"
+    - "normal-normal"
+MODEL:
+  NAME: EvLCD
+  event_ch: 64
+  base_ch: 48
+  lcd_ch: 32
+VISUALIZATION:
+  folder: ./vis
+  tag: EvLCD_SEE_finetune_taskw
+  intermediate_visualization: false
+  ONLY_VIS: false
