@@ -3,7 +3,7 @@ torchvision>=0.15.0
 einops
 PyYAML
 numpy
-opencv-python
+opencv-python-headless
 absl-py
 easydict
 numba

@@ -38,7 +38,7 @@ DATASET:
   in_frames: 1
   crop_h: 260
   crop_w: 346
-  sample_step: 1
+  sample_step: 10
   all_groups_as_testing: true
   eval_phase: true
   event_representation_config:

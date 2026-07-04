@@ -46,8 +46,8 @@ Edit `configs/EvLCD_SEE_eval_tta.yaml` to set `DATASET.root` to your eval datase
 
 ```bash
 # Step 1: TTA inference (4-flip ensemble); adjust GPU IDs as needed
-# mean_prompt_manifest.json must reside inside DATASET.root (set in the YAML above);
-# the framework reads it automatically when eval_phase: true
+# sample_step: 10 in the YAML selects every 10th frame (matches the Codabench eval protocol)
+# mean_prompt_manifest.json must reside inside DATASET.root; read automatically when eval_phase: true
 CUDA_VISIBLE_DEVICES=0,1,2,3 PYTHONPATH=. python see/main.py \
   --yaml_file=configs/EvLCD_SEE_eval_tta.yaml \
   --log_dir=logs/eval \

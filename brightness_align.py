@@ -114,7 +114,7 @@ def main():
     parser.add_argument("--vis_dir", required=True, help="Input vis directory")
     parser.add_argument("--out_dir", required=True, help="Output directory")
     parser.add_argument("--method", default="shift", choices=["shift", "scale"])
-    parser.add_argument("--manifest", default="/ssd1/lchiayu/llimg/data/SEE-Additional-Test-Data-wo-GT/DVS346-eval-mean-prompt2/mean_prompt_manifest.json")
+    parser.add_argument("--manifest", required=True, help="Path to mean_prompt_manifest.json in the eval dataset root")
     args = parser.parse_args()
 
     print(f"Method: {args.method}")

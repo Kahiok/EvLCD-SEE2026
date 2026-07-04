@@ -15,7 +15,17 @@ import torch.nn as nn
 from torch.nn.utils import clip_grad_norm_
 from absl.logging import debug, flags, info
 from pudb import set_trace
-from torch.testing._internal.common_quantization import AverageMeter
+class AverageMeter:
+    def __init__(self, name=""):
+        self.name = name
+        self.reset()
+    def reset(self):
+        self.val = self.avg = self.sum = self.count = 0
+    def update(self, val, n=1):
+        self.val = val
+        self.sum += val * n
+        self.count += n
+        self.avg = self.sum / self.count
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
