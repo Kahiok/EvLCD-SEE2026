@@ -4,3 +4,10 @@ einops
 PyYAML
 numpy
 opencv-python
+absl-py
+easydict
+numba
+pudb
+timm
+tensorboard
+scipy

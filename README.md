@@ -15,7 +15,15 @@ Total parameters: **15.85M**
 
 ## Requirements
 
+Create a conda environment and install dependencies:
+
 ```bash
+conda create -n evlcd python=3.10 -y
+conda activate evlcd
+
+# Install PyTorch with CUDA (adjust cuda version as needed)
+conda install pytorch torchvision pytorch-cuda=12.4 -c pytorch -c nvidia -y
+
 pip install -r requirements.txt
 ```
 
@@ -38,6 +46,8 @@ Edit `configs/EvLCD_SEE_eval_tta.yaml` to set `DATASET.root` to your eval datase
 
 ```bash
 # Step 1: TTA inference (4-flip ensemble); adjust GPU IDs as needed
+# mean_prompt_manifest.json must reside inside DATASET.root (set in the YAML above);
+# the framework reads it automatically when eval_phase: true
 CUDA_VISIBLE_DEVICES=0,1,2,3 PYTHONPATH=. python see/main.py \
   --yaml_file=configs/EvLCD_SEE_eval_tta.yaml \
   --log_dir=logs/eval \
