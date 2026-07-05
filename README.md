@@ -119,7 +119,7 @@ If you find this work useful, please cite:
 ```bibtex
 @inproceedings{lin2026evlcd,
   title     = {EvLCD: Event-Guided WDR Image Restoration with Brightness-Prompt Conditioning},
-  author    = {Lin, Chia-Yu and Lee, Chia-Ming and Hsu, Chih-Chung},
+  author    = {Lin, Chia-Yu and Tsai, Yun-Tze and Liu, Shao-Kai and Jian, Rong-Lin and Lee, Chia-Ming and Hsu, Chih-Chung},
   booktitle = {Proceedings of the ECCV Workshop on SEE-600K Challenge},
   year      = {2026},
   note      = {to appear}

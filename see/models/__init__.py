@@ -48,16 +48,15 @@ def get_model(config):
             exposure_sample_num=config.exposure_sample_num,
             SEE_config=config.SEE_config,
         )
-    elif config.NAME in ("EvLCD", "LCDEvLight_v20h"):
+    elif config.NAME == "EvLCD":
         import importlib.util, os
         _base = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         _fpath = os.path.join(_base, "models", "evlcd.py")
         _spec = importlib.util.spec_from_file_location("evlcd", _fpath)
         _mod = importlib.util.module_from_spec(_spec)
         _spec.loader.exec_module(_mod)
-        EvLCD = getattr(_mod, "EvLCD", getattr(_mod, "LCDEvLight", None))
         kwargs = dict(event_ch=config.event_ch, base_ch=config.base_ch, lcd_ch=config.lcd_ch)
         kwargs["no_bprompt"] = getattr(config, "no_bprompt", False)
-        return EvLCD(**kwargs)
+        return _mod.EvLCD(**kwargs)
     else:
         raise ValueError(f"Unknown model: {config.NAME}")

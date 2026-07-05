@@ -638,5 +638,3 @@ class EvLCD(_EvLCDBase):
                 batch["NL_VID_STATS"] = b_prompt
         return _EvLCDBase.forward(self, batch)
 
-
-LCDEvLight = EvLCD  # backward-compatible alias for old configs
