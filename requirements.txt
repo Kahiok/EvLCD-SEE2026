@@ -8,6 +8,6 @@ absl-py
 easydict
 numba
 pudb
-timm
+timm==1.0.27
 tensorboard
 scipy

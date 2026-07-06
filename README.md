@@ -21,13 +21,19 @@ Create a conda environment and install dependencies:
 conda create -n evlcd python=3.10 -y
 conda activate evlcd
 
-# Install PyTorch with CUDA (adjust cuda version as needed)
-conda install pytorch torchvision pytorch-cuda=12.4 -c pytorch -c nvidia -y
+# Install PyTorch 2.6.0 with CUDA 12.4 (adjust pytorch-cuda version if needed)
+conda install pytorch==2.6.0 torchvision==0.21.0 pytorch-cuda=12.4 -c pytorch -c nvidia -y
 
 pip install -r requirements.txt
 ```
 
-Tested with PyTorch 2.6.0, CUDA 12.4.
+Tested with PyTorch 2.6.0, torchvision 0.21.0, timm 1.0.27, CUDA 12.4.
+
+## Dataset Preparation
+
+Download the SEE-600K dataset from the [official repository](https://github.com/yunfanLu/SEE) and follow the provided preprocessing instructions to generate event voxel-grid NPY files (64-channel, scale 5) from the raw event stream.
+
+For the evaluation phase, the `mean_prompt_manifest.json` file is included in the official evaluation dataset (DVS346-eval-mean-prompt2). Place it inside `DATASET.root` as specified in the eval config.
 
 ## Checkpoints
 
@@ -45,10 +51,11 @@ Place under `checkpoints/`:
 Edit `configs/EvLCD_SEE_eval_tta.yaml` to set `DATASET.root` to your eval dataset path.
 
 ```bash
-# Step 1: TTA inference (4-flip ensemble); adjust GPU IDs as needed
+# Step 1: TTA inference (4-flip ensemble)
 # sample_step: 10 in the YAML selects every 10th frame (matches the Codabench eval protocol)
 # mean_prompt_manifest.json must reside inside DATASET.root; read automatically when eval_phase: true
-CUDA_VISIBLE_DEVICES=0,1,2,3 PYTHONPATH=. python see/main.py \
+# Single GPU is sufficient for inference
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=. python see/main.py \
   --yaml_file=configs/EvLCD_SEE_eval_tta.yaml \
   --log_dir=logs/eval \
   --RESUME_PATH=checkpoints/EvLCD_finetune_ep019.pth.tar \
@@ -74,13 +81,11 @@ cd submission_dir && zip -r ../submission.zip . -x "*.DS_Store"
 Edit `configs/EvLCD_SEE_train.yaml` to set `DATASET.root` to your SEE-600K path.
 
 ```bash
-# 4 GPUs recommended; adjust CUDA_VISIBLE_DEVICES as needed
-CUDA_VISIBLE_DEVICES=0,1,2,3 PYTHONPATH=. python see/main.py \
+# Single GPU or multi-GPU; our setup: 4 × RTX 3090 ~23 h, single GPU ~90 h (80 epochs)
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=. python see/main.py \
   --yaml_file=configs/EvLCD_SEE_train.yaml \
   --log_dir=logs/EvLCD_train
 ```
-
-Hardware: 4 × RTX 3090, ~23 hours (80 epochs).
 
 ### 2. Task-weighted fine-tuning
 
@@ -89,14 +94,12 @@ Edit `configs/EvLCD_SEE_finetune_taskw.yaml`:
 - Set `RESUME.PATH` to the base checkpoint (default: `checkpoints/EvLCD_base_ep071.pth.tar`)
 
 ```bash
-# 2 GPUs recommended; adjust CUDA_VISIBLE_DEVICES as needed
-CUDA_VISIBLE_DEVICES=0,1 PYTHONPATH=. python see/main.py \
+# Single GPU or multi-GPU; our setup: 2 × RTX 3090 ~12.5 h, single GPU ~25 h (20 epochs)
+# Loss weights: low-normal ×2.0, high-normal ×2.0, normal-normal ×0.5
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=. python see/main.py \
   --yaml_file=configs/EvLCD_SEE_finetune_taskw.yaml \
   --log_dir=logs/EvLCD_finetune
 ```
-
-Hardware: 2 × RTX 3090, ~12.5 hours (20 epochs).  
-Loss weights: low-normal ×2.0, high-normal ×2.0, normal-normal ×0.5.
 
 ## Config Overview
 
@@ -111,6 +114,10 @@ Loss weights: low-normal ×2.0, high-normal ×2.0, normal-normal ×0.5.
 - [LCDPNet](https://hywang99.github.io/lcdpnet/) — Local Color Distribution Embedded module
 - [Restormer](https://github.com/swz30/Restormer) — MDTA block design
 - [SEE-600K](https://github.com/yunfanLu/SEE) — dataset and evaluation framework
+
+## License
+
+This project is released under the [MIT License](LICENSE).
 
 ## Citation
 
